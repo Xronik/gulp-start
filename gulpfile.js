@@ -1,12 +1,14 @@
 let gulp = require('gulp');
 let sass = require('gulp-sass');
 let browserSync = require('browser-sync');
-const { task } = require('gulp');
-
+let rename = require('gulp-rename');
+let uglify = require('gulp-uglify');
+let concat = require('gulp-concat');
 
 gulp.task('scss', function(){
     return gulp.src('app/scss/**/*.scss')
-        .pipe(sass({outputStyle: `expanded`}))
+        .pipe(sass({outputStyle: `compressed`}))
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('app/css/'))
         .pipe(browserSync.reload({stream: true}))
 });
@@ -16,10 +18,21 @@ gulp.task('html', function(){
         .pipe(browserSync.reload({stream: true}))
 })
 
-// gulp.task('js', function(){
-//     return gulp.src('app/js/*.js')
-//         .pipe(browserSync.reload({stream: true}))
-// })
+gulp.task('script-js', function(){
+    return gulp.src('app/js/*.js')
+        .pipe(browserSync.reload({stream: true}))
+})
+
+gulp.task('js', function(){
+    return gulp.src([
+        'node_modules/slick-carousel/slick/slick.js',
+        'node_modules/magnific-popup/dist/jquery.magnific-popup.js'
+    ])
+        .pipe(concat('libs.min.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest('app/js'))
+        .pipe(browserSync.reload({stream: true}))
+})
 
 gulp.task('browser-sync', function() {
     browserSync.init({
@@ -33,8 +46,8 @@ gulp.task('browser-sync', function() {
 gulp.task('watch', function(){
     gulp.watch('app/scss/**/*.scss', gulp.parallel('scss'))
     gulp.watch('app/*.html', gulp.parallel('html'))
-    // gulp.watch('app/js/*.js', gulp.parallel('js'))
+    gulp.watch('app/js/*.js', gulp.parallel('script-js'))
 });
 
 
-gulp.task('default', gulp.parallel('browser-sync', 'watch'));
+gulp.task('default', gulp.parallel('scss', 'js', 'browser-sync', 'watch'));

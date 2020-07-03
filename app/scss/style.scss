@@ -1,9 +1,3 @@
-body {
-    background-color: red;
-}
-.test {
-    background-color: red;
-    &:hover {
-        background-color: green;
-    }
-}
+@import "../../node_modules/normalize.css/normalize";
+// @import "../../node_modules/slick-carousel/slick/slick"; // delete scss from folder
+// @import "../../node_modules/magnific-popup/dist/magnific-popup";
